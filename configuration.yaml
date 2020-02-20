@@ -831,10 +831,10 @@ notify:
       - service: twilio_sms
         data:
           target:
-            - !secret heather_cell
-            - !secret amanda_cell
-            - !secret jeanette_cell
-            - !secret scott_cell
+            - !secret h_cell
+            - !secret a_cell
+            - !secret j_cell
+            - !secret s_cell
             - !secret mom_cell
             - !secret dad_cell
 #  Signal Messenger Use house Number for this 
