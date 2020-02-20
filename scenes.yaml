@@ -1,0 +1,231 @@
+- id: '1574357831642'
+  name: Nightlight
+  entities:
+    light.hallway_light:
+      brightness: 2.55
+      current_power_w: '0.9'
+      daily_energy_kwh: '0.007'
+      friendly_name: Hallway Light
+      monthly_energy_kwh: '0.021'
+      state: 'on'
+      supported_features: 1
+    light.living_room_lamp_1:
+      brightness: 2.55
+      current_power_w: '0.9'
+      daily_energy_kwh: '0.008'
+      friendly_name: Living Room Lamp 1
+      monthly_energy_kwh: '0.079'
+      state: 'on'
+      supported_features: 1
+    light.living_room_lamp_2:
+      brightness: 2.55
+      current_power_w: '0.9'
+      daily_energy_kwh: '0.008'
+      friendly_name: Living Room Lamp 2
+      monthly_energy_kwh: '0.078'
+      state: 'on'
+      supported_features: 1
+    light.living_room_lamp_3:
+      brightness: 2.55
+      current_power_w: '0.9'
+      daily_energy_kwh: '0.008'
+      friendly_name: Living room lamp 3
+      monthly_energy_kwh: '0.076'
+      state: 'on'
+      supported_features: 1
+    light.living_room_lamp_4:
+      brightness: 5.1
+      current_power_w: '1.0'
+      daily_energy_kwh: '0.008'
+      friendly_name: Living room lamp 4
+      monthly_energy_kwh: '0.061'
+      state: 'on'
+      supported_features: 1
+- id: '1574878633060'
+  name: 'Living Room Lamps On '
+  entities:
+    light.living_room_lamp_1:
+      brightness: 255
+      current_power_w: '8.0'
+      daily_energy_kwh: '0.001'
+      friendly_name: Living Room Lamp 1
+      monthly_energy_kwh: '0.170'
+      state: 'on'
+      supported_features: 1
+    light.living_room_lamp_2:
+      brightness: 255
+      current_power_w: '8.0'
+      daily_energy_kwh: '0.001'
+      friendly_name: Living Room Lamp 2
+      monthly_energy_kwh: '0.174'
+      state: 'on'
+      supported_features: 1
+    light.living_room_lamp_3:
+      brightness: 255
+      current_power_w: '8.0'
+      daily_energy_kwh: '0.001'
+      friendly_name: Living room lamp 3
+      monthly_energy_kwh: '0.167'
+      state: 'on'
+      supported_features: 1
+    light.living_room_lamp_4:
+      brightness: 255
+      current_power_w: '10.8'
+      daily_energy_kwh: '0.008'
+      friendly_name: Living room lamp 4
+      monthly_energy_kwh: '0.012'
+      state: 'on'
+      supported_features: 1
+- id: '1579270838782'
+  name: Lights out
+  entities:
+    light.entryway_light_1:
+      restored: true
+      state: unavailable
+      supported_features: 0
+    light.entryway_light_2:
+      restored: true
+      state: unavailable
+      supported_features: 0
+    light.hallway_light:
+      current_power_w: '0.0'
+      daily_energy_kwh: '0.000'
+      friendly_name: Hallway Light
+      monthly_energy_kwh: '0.020'
+      state: 'off'
+      supported_features: 1
+    light.linear_nortek_security_control_llc_lb60z_1_dimmable_led_light_bulb_level:
+      friendly_name: Kitchen Stove Light
+      node_id: 2
+      state: 'off'
+      supported_features: 1
+      value_id: '72057594076299265'
+      value_index: 0
+      value_instance: 1
+    light.living_room_lamp_1:
+      current_power_w: '0.0'
+      daily_energy_kwh: '0.000'
+      friendly_name: Living Room Lamp 1
+      monthly_energy_kwh: '0.072'
+      state: 'off'
+      supported_features: 1
+    light.living_room_lamp_2:
+      current_power_w: '0.0'
+      daily_energy_kwh: '0.000'
+      friendly_name: Living Room Lamp 2
+      monthly_energy_kwh: '0.081'
+      state: 'off'
+      supported_features: 1
+    light.living_room_lamp_3:
+      current_power_w: '0.0'
+      daily_energy_kwh: '0.000'
+      friendly_name: Living room lamp 3
+      monthly_energy_kwh: '0.076'
+      state: 'off'
+      supported_features: 1
+    light.living_room_lamp_4:
+      current_power_w: '0.0'
+      daily_energy_kwh: '0.000'
+      friendly_name: Living room lamp 4
+      monthly_energy_kwh: '0.086'
+      state: 'off'
+      supported_features: 1
+    light.utility_room:
+      current_power_w: '0.0'
+      daily_energy_kwh: '0.000'
+      friendly_name: Utility Room
+      monthly_energy_kwh: '0.014'
+      state: 'off'
+      supported_features: 1
+    switch.front_door_light:
+      friendly_name: Front Door Light
+      state: 'off'
+    switch.garage_door_side_light:
+      friendly_name: Garage Door Side Light
+      state: 'off'
+    switch.garage_lights:
+      friendly_name: Garage Lights
+      state: 'off'
+    switch.kitchen_light_1:
+      friendly_name: Kitchen Light 1
+      state: 'off'
+    switch.kitchen_light_2:
+      friendly_name: Kitchen Light 2
+      state: 'off'
+    switch.outside_garage_light:
+      friendly_name: Outside Garage light
+      state: 'off'
+    zwave.linear_nortek_security_control_llc_lb60z_1_dimmable_led_light_bulb:
+      application_version: '5.08'
+      averageRequestRTT: 26
+      averageResponseRTT: 36
+      capabilities:
+      - listening
+      - routing
+      - beaming
+      - zwave_plus
+      friendly_name: Linear (Nortek Security Control LLC) LB60Z-1 Dimmable LED Light
+        Bulb
+      is_awake: true
+      is_failed: false
+      is_info_received: true
+      is_ready: true
+      is_zwave_plus: true
+      lastRequestRTT: 26
+      lastResponseRTT: 37
+      manufacturer_name: Linear (Nortek Security Control LLC)
+      max_baud_rate: 40000
+      neighbors:
+      - 1
+      - 5
+      node_id: 2
+      node_name: Linear (Nortek Security Control LLC) LB60Z-1 Dimmable LED Light Bulb
+      product_name: LB60Z-1 Dimmable LED Light Bulb
+      query_stage: Complete
+      receivedCnt: 27
+      receivedDups: 0
+      receivedTS: '2020-01-17 08:23:49:191 '
+      receivedUnsolicited: 0
+      retries: 0
+      sentCnt: 38
+      sentFailed: 0
+      sentTS: '2020-01-17 08:23:49:153 '
+      state: ready
+- id: '1581285728173'
+  name: Nightlight Off
+  entities:
+    light.hallway_light:
+      current_power_w: '0.0'
+      daily_energy_kwh: '0.007'
+      friendly_name: Hallway Light
+      monthly_energy_kwh: '0.021'
+      state: 'off'
+      supported_features: 1
+    light.living_room_lamp_1:
+      current_power_w: '0.0'
+      daily_energy_kwh: '0.008'
+      friendly_name: Living Room Lamp 1
+      monthly_energy_kwh: '0.079'
+      state: 'off'
+      supported_features: 1
+    light.living_room_lamp_2:
+      current_power_w: '0.0'
+      daily_energy_kwh: '0.008'
+      friendly_name: Living Room Lamp 2
+      monthly_energy_kwh: '0.078'
+      state: 'off'
+      supported_features: 1
+    light.living_room_lamp_3:
+      current_power_w: '0.0'
+      daily_energy_kwh: '0.008'
+      friendly_name: Living room lamp 3
+      monthly_energy_kwh: '0.076'
+      state: 'off'
+      supported_features: 1
+    light.living_room_lamp_4:
+      current_power_w: '0.0'
+      daily_energy_kwh: '0.008'
+      friendly_name: Living room lamp 4
+      monthly_energy_kwh: '0.061'
+      state: 'off'
+      supported_features: 1
