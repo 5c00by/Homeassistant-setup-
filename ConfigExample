@@ -1,0 +1,949 @@
+homeassistant:
+  # Name of the location where Home Assistant is running
+  name: Home
+  # Location required to calculate the time the sun rises and sets
+  latitude: !secret home_lat
+  longitude: !secret home_long
+  # Impacts weather/sunrise data (altitude above sea level in meters)
+  elevation: 123
+  # metric for Metric, imperial for Imperial
+  unit_system: imperial
+  # Pick yours from here: http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+  time_zone: America/New_York
+  # Customization file
+  customize: !include customize.yaml
+  auth_mfa_modules:
+    - type: totp
+      name: Authenticator app
+    - type: notify
+      include:
+        - notify.mobile_app_samsung_note_10
+      message: 'let me in {}'
+# Show links to resources in log and frontend
+# introduction:
+# Enables the frontend
+frontend: 
+  themes: !include_dir_merge_named themes
+# Enables configuration UI
+config:
+#HACS
+hacs:
+  token: wouldntyouliketoknowifthisworksornot
+# Uncomment this if you are using SSL/TLS, running in Docker container, etc.
+http:
+#  base_url: !secret duckdns_base_url
+#  ssl_certificate: /ssl/fullchain.pem
+#  ssl_key: /ssl/privkey.pem
+# Checks for available updates
+# Note: This component will send some information about your system to
+# the developers to assist with development of Home Assistant.
+# For more information, please see:
+# https://home-assistant.io/blog/2016/10/25/explaining-the-updater/
+updater:
+  # Optional, allows Home Assistant developers to focus on popular components.
+  # include_used_components: true
+
+# Discover some devices automatically
+discovery:
+ssdp:
+zeroconf:
+mobile_app:
+
+# Allows you to issue voice commands from the frontend in enabled browsers. Note: Will need to build mic speaker system to use this possibly in conjunction with Snips.ai
+conversation:
+
+# Enables support for tracking state changes over time
+history:
+
+# View all events in a logbook
+logbook:
+
+# Enables a map showing the location of tracked devices
+map:
+
+#people tracking information
+person:
+
+#speedtest. Checks house internet speed and stats. Use to see if something is going on network wise 
+speedtestdotnet:
+
+# Track the sun. Praise the sun!!
+sun:
+
+# Earthquake Tracking. Because why not? 
+geo_location:
+  - platform: usgs_earthquakes_feed
+    feed_type: 'past_day_all_earthquakes'
+
+#System health statistics
+system_health:
+
+#Camera stream setup Allows all cameras to use Stream config which will allow for cameras to double as a motion sensor as well as live stream
+#camera_view: live
+stream:
+
+# Z-wave path This is needed in order for the zwave devices to work. Eventually moving most switches to Z-wave as it's more reliable 
+zwave: 
+  usb_path: /dev/ttyACM0
+# iCloud Integration 
+icloud:
+  - username: sjobs@icloud.com
+    password: 'wozniaklovesme'
+#######################################
+sensor: #weather conditions
+  - platform: cpuspeed #Processor and computer Stats 
+  - platform: brewdog #Brewdog Beer Suggestion Sensor
+  - platform: yr
+    monitored_conditions:
+      - temperature
+      - symbol
+      - precipitation
+      - windSpeed
+      - pressure
+      - windDirection
+      - humidity
+      - fog
+      - cloudiness
+      - lowClouds
+      - mediumClouds
+      - highClouds
+      - dewpointTemperature
+  - platform: reddit #Reddit CSS Stream Cannot use profile with 2 factor Authentication 
+    username: !secret reddit_username
+    password: !secret reddit_password
+    client_id: !secret reddit_client_id
+    client_secret: !secret reddit_client_secret
+    subreddits:
+      - news
+      - worldnews
+      - politics
+  - platform: nhl_api
+    team_id: 1 #[TEAM ID OF TRACKED TEAM - REFER TO DOCS https://github.com/JayBlackedOut/hass-nhlapi/blob/master/teams.md]
+    name: New York Islanders #[(Optional) FRIENDLY NAME OF SENSOR - DEFAULT: NHL Sensor]
+    scan_interval: 3 #[(Optional) SCAN INTERVAL IN SECONDS - DEFAULT: 5]
+# Google Fit information and config can be found https://github.com/vmanuel/hacs-google-fit and https://github.com/hemantkamalakar/haconfigs/blob/d1bfe116faa4bf465cd9c58bab91fc1333167c25/custom_components/google_fit/sensor.py
+  - platform: google_fit
+    name: Google Fit
+    client_id: !secret google_fit_clientID
+    client_secret: !secret google_fit_client_secret
+  - platform: email #Email Sensor showing email lists
+    email: !secret home_email
+    password: !secret a_email2txt
+  - platform: weatheralerts #alerts for severe weather
+    state: NY
+    zone: "000"
+  - platform: google_keep #Google Keep To Do list Sensor
+    username: !secret google_keep.username
+    password: !secret google_keep.password
+    labels:
+      - 'Home Assistant'
+    pinned: true
+#Space LAunch Schedule
+  - platform: launch_library
+#Mold Indicator Check for probablility of mold growing in the house. Use with Thermostat to vent the house to prevent growth. 
+  - platform: mold_indicator
+    indoor_temp_sensor: sensor.home_temperature
+    indoor_humidity_sensor: sensor.home_humidity
+    outdoor_temp_sensor: sensor.yr_temperature
+    calibration_factor: 1.81
+#Crime Sensor (reported crime within 15 miles of home)
+  - platform: crimereports
+    name: Reported Crime
+    radius: 24140.2
+################################################################################################################################################################################
+
+################################################################################################################################################################################
+#Tp Link Power Usage Sensors
+
+  - platform: template
+    sensors:
+      switch_master_bedroom_fan_outlet_amps:
+        friendly_name_template: "{{ states.switch.master_bedroom_fan_outlet}} Current"
+        value_template: '{{ states.switch.master_bedroom_fan_outlet.attributes["current_a"] | float }}'
+        unit_of_measurement: 'A'
+      switch_master_bedroom_fan_outlet_watts:
+        friendly_name_template: "{{ states.switch.master_bedroom_fan_outlet}} Current Consumption"
+        value_template: '{{ states.switch.master_bedroom_fan_outlet.attributes["current_power_w"] | float }}'
+        unit_of_measurement: 'W'
+      switch_master_bedroom_fan_outlet_total_kwh:
+        friendly_name_template: "{{ states.switch.master_bedroom_fan_outlet}} Total Consumption"
+        value_template: '{{ states.switch.master_bedroom_fan_outlet.attributes["total_energy_kwh"] | float }}'
+        unit_of_measurement: 'kWh'
+      switch_master_bedroom_fan_outlet_volts:
+        friendly_name_template: "{{ states.switch.master_bedroom_fan_outlet}} Voltage"
+        value_template: '{{ states.switch.master_bedroom_fan_outlet.attributes["voltage"] | float }}'
+        unit_of_measurement: 'V'
+      switch_master_bedroom_fan_outlet_today_kwh:
+        friendly_name_template: "{{ states.switch.master_bedroom_fan_outlet}} Today's Consumption"
+        value_template: '{{ states.switch.master_bedroom_fan_outlet.attributes["today_energy_kwh"] | float }}'
+        unit_of_measurement: 'kWh'  
+  - platform: template
+    sensors:
+      switch_master_bedroom_light_amps:
+        friendly_name_template: "{{ states.switch.master_bedroom_light}} Current"
+        value_template: '{{ states. switch.master_bedroom_light.attributes["current_a"] | float }}'
+        unit_of_measurement: 'A'
+      switch_master_bedroom_light_watts:
+        friendly_name_template: "{{ states.switch.master_bedroom_light}} Current Consumption"
+        value_template: '{{ states. switch.master_bedroom_light.attributes["current_power_w"] | float }}'
+        unit_of_measurement: 'W'
+      switch_master_bedroom_lighth_total_kwh:
+        friendly_name_template: "{{ states.switch.master_bedroom_light}} Total Consumption"
+        value_template: '{{ states. switch.master_bedroom_light.attributes["total_energy_kwh"] | float }}'
+        unit_of_measurement: 'kWh'
+      switch_master_bedroom_light_volts:
+        friendly_name_template: "{{ states.switch.master_bedroom_light}} Voltage"
+        value_template: '{{ states. switch.master_bedroom_light.attributes["voltage"] | float }}'
+        unit_of_measurement: 'V'
+      switch_master_bedroom_light_today_kwh:
+        friendly_name_template: "{{ states.switch.master_bedroom_light}} Today's Consumption"
+        value_template: '{{ states. switch.master_bedroom_light.attributes["today_energy_kwh"] | float }}'
+        unit_of_measurement: 'kWh'  
+  - platform: template
+    sensors:
+      switch_guest_bedroom_brown_amps:
+        friendly_name_template: "{{ states.switch.guest_bedroom_brown}} Current"
+        value_template: '{{ states.switch.guest_bedroom_brown.attributes["current_a"] | float }}'
+        unit_of_measurement: 'A'
+      switch_guest_bedroom_brown_watts:
+        friendly_name_template: "{{ states.switch.guest_bedroom_brown}} Current Consumption"
+        value_template: '{{ states.switch.guest_bedroom_brown.attributes["current_power_w"] | float }}'
+        unit_of_measurement: 'W'
+      switch_guest_bedroom_brown_total_kwh:
+        friendly_name_template: "{{ states.switch.guest_bedroom_brown}} Total Consumption"
+        value_template: '{{ states.switch.guest_bedroom_brown.attributes["total_energy_kwh"] | float }}'
+        unit_of_measurement: 'kWh'
+      switch_guest_bedroom_brown_volts:
+        friendly_name_template: "{{ states.switch.guest_bedroom_brown}} Voltage"
+        value_template: '{{ states.switch.guest_bedroom_brown.attributes["voltage"] | float }}'
+        unit_of_measurement: 'V'
+      switch_guest_bedroom_brown_today_kwh:
+        friendly_name_template: "{{ states.switch.guest_bedroom_brown}} Today's Consumption"
+        value_template: '{{ states.switch.guest_bedroom_brown.attributes["today_energy_kwh"] | float }}'
+        unit_of_measurement: 'kWh'  
+  - platform: template
+    sensors:
+      switch_guest_room_blue_amps:
+        friendly_name_template: "{{ states.switch.guest_room_blue}} Current"
+        value_template: '{{ states.switch.guest_room_blue.attributes["current_a"] | float }}'
+        unit_of_measurement: 'A'
+      switch_guest_room_blue_watts:
+        friendly_name_template: "{{ states.switch.guest_room_blue}} Current Consumption"
+        value_template: '{{ states.switch.guest_room_blue.attributes["current_power_w"] | float }}'
+        unit_of_measurement: 'W'
+      switch_guest_room_blue_total_kwh:
+        friendly_name_template: "{{ states.switch.guest_room_blue}} Total Consumption"
+        value_template: '{{ states.switch.guest_room_blue.attributes["total_energy_kwh"] | float }}'
+        unit_of_measurement: 'kWh'
+      switch_guest_room_blue_volts:
+        friendly_name_template: "{{ states.switch.guest_room_blue}} Voltage"
+        value_template: '{{ states.switch.guest_room_blue.attributes["voltage"] | float }}'
+        unit_of_measurement: 'V'
+      switch_guest_room_blue_today_kwh:
+        friendly_name_template: "{{ states.switch.guest_room_blue}} Today's Consumption"
+        value_template: '{{ states.switch.guest_room_blue.attributes["today_energy_kwh"] | float }}'
+        unit_of_measurement: 'kWh'  
+  - platform: template
+    sensors:
+      switch_living_room_fan_amps:
+        friendly_name_template: "{{ states.switch.living_room_fan}} Current"
+        value_template: '{{ states.switch.living_room_fan.attributes["current_a"] | float }}'
+        unit_of_measurement: 'A'
+      switch_living_room_fan_watts:
+        friendly_name_template: "{{ states.switch.living_room_fan}} Current Consumption"
+        value_template: '{{ states.switch.living_room_fan.attributes["current_power_w"] | float }}'
+        unit_of_measurement: 'W'
+      switch_living_room_fan_total_kwh:
+        friendly_name_template: "{{ states.switch.living_room_fan}} Total Consumption"
+        value_template: '{{ states.switch.living_room_fan.attributes["total_energy_kwh"] | float }}'
+        unit_of_measurement: 'kWh'
+      switch_living_room_fan_volts:
+        friendly_name_template: "{{ states.switch.living_room_fan}} Voltage"
+        value_template: '{{ states.switch.living_room_fan.attributes["voltage"] | float }}'
+        unit_of_measurement: 'V'
+      switch_living_room_fan_today_kwh:
+        friendly_name_template: "{{ states.switch.living_room_fan}} Today's Consumption"
+        value_template: '{{ states.switch.living_room_fan.attributes["today_energy_kwh"] | float }}'
+        unit_of_measurement: 'kWh'  
+  - platform: template
+    sensors:
+      switch_foyer_light_whole_house_fan_amps:
+        friendly_name_template: "{{ states.switch.foyer_light_whole_house_fan}} Current"
+        value_template: '{{ states.switch.foyer_light_whole_house_fan.attributes["current_a"] | float }}'
+        unit_of_measurement: 'A'
+      switch_foyer_light_whole_house_fan_watts:
+        friendly_name_template: "{{ states.switch.foyer_light_whole_house_fan}} Current Consumption"
+        value_template: '{{ states.switch.foyer_light_whole_house_fan.attributes["current_power_w"] | float }}'
+        unit_of_measurement: 'W'
+      switch_foyer_light_whole_house_fan_total_kwh:
+        friendly_name_template: "{{ states.switch.foyer_light_whole_house_fan}} Total Consumption"
+        value_template: '{{ states.switch.foyer_light_whole_house_fan.attributes["total_energy_kwh"] | float }}'
+        unit_of_measurement: 'kWh'
+      switch_foyer_light_whole_house_fan_volts:
+        friendly_name_template: "{{ states.switch.foyer_light_whole_house_fan}} Voltage"
+        value_template: '{{ states.switch.foyer_light_whole_house_fan.attributes["voltage"] | float }}'
+        unit_of_measurement: 'V'
+      switch_foyer_light_whole_house_fan_today_kwh:
+        friendly_name_template: "{{ states.switch.foyer_light_whole_house_fan}} Today's Consumption"
+        value_template: '{{ states.switch.foyer_light_whole_house_fan.attributes["today_energy_kwh"] | float }}'
+        unit_of_measurement: 'kWh'  
+  - platform: template
+    sensors:
+      switch_garage_door_side_light_amps:
+        friendly_name_template: "{{ states.switch.garage_door_side_light}} Current"
+        value_template: '{{ states.switch.garage_door_side_light.attributes["current_a"] | float }}'
+        unit_of_measurement: 'A'
+      switch_garage_door_side_light_watts:
+        friendly_name_template: "{{ states.switch.garage_door_side_light}} Current Consumption"
+        value_template: '{{ states.switch.garage_door_side_light.attributes["current_power_w"] | float }}'
+        unit_of_measurement: 'W'
+      switch_garage_door_side_light_total_kwh:
+        friendly_name_template: "{{ states.switch.garage_door_side_light}} Total Consumption"
+        value_template: '{{ states.switch.garage_door_side_light.attributes["total_energy_kwh"] | float }}'
+        unit_of_measurement: 'kWh'
+      switch_garage_door_side_light_volts:
+        friendly_name_template: "{{ states.switch.garage_door_side_light}} Voltage"
+        value_template: '{{ states.switch.garage_door_side_light.attributes["voltage"] | float }}'
+        unit_of_measurement: 'V'
+      switch_garage_door_side_light_today_kwh:
+        friendly_name_template: "{{ states.switch.garage_door_side_light}} Today's Consumption"
+        value_template: '{{ statesswitch.garage_door_side_light.attributes["today_energy_kwh"] | float }}'
+        unit_of_measurement: 'kWh'  
+  - platform: template
+    sensors:
+      switch_theater_room_switch_amps:
+        friendly_name_template: "{{ states.switch.theater_room_switch}} Current"
+        value_template: '{{ states.switch.theater_room_switch.attributes["current_a"] | float }}'
+        unit_of_measurement: 'A'
+      switch_theater_room_switch_watts:
+        friendly_name_template: "{{ states.switch.theater_room_switch}} Current Consumption"
+        value_template: '{{ states.switch.theater_room_switch.attributes["current_power_w"] | float }}'
+        unit_of_measurement: 'W'
+      switch_theater_room_switch_total_kwh:
+        friendly_name_template: "{{ states.switch.theater_room_switch}} Total Consumption"
+        value_template: '{{ states.switch.theater_room_switch.attributes["total_energy_kwh"] | float }}'
+        unit_of_measurement: 'kWh'
+      switch_theater_room_switch_volts:
+        friendly_name_template: "{{ states.switch.theater_room_switch}} Voltage"
+        value_template: '{{ states.switch.theater_room_switch.attributes["voltage"] | float }}'
+        unit_of_measurement: 'V'
+      switch_theater_room_switch_today_kwh:
+        friendly_name_template: "{{ states.switch.theater_room_switch}} Today's Consumption"
+        value_template: '{{ states.switch.theater_room_switch.attributes["today_energy_kwh"] | float }}'
+        unit_of_measurement: 'kWh'  
+  - platform: template
+    sensors:
+      switch_back_deck_amps:
+        friendly_name_template: "{{ states.switch.back_deck}} Current"
+        value_template: '{{ states.switch.back_deck.attributes["current_a"] | float }}'
+        unit_of_measurement: 'A'
+      switch_back_deck_watts:
+        friendly_name_template: "{{ states.switch.back_deck}} Current Consumption"
+        value_template: '{{ states.switch.back_deck.attributes["current_power_w"] | float }}'
+        unit_of_measurement: 'W'
+      switch_back_deck_total_kwh:
+        friendly_name_template: "{{ states.switch.back_deck}} Total Consumption"
+        value_template: '{{ states.switch.back_deck.attributes["total_energy_kwh"] | float }}'
+        unit_of_measurement: 'kWh'
+      switch_back_deck_volts:
+        friendly_name_template: "{{ states.switch.back_deck}} Voltage"
+        value_template: '{{ states.switch.back_deck.attributes["voltage"] | float }}'
+        unit_of_measurement: 'V'
+      switch_back_deck_today_kwh:
+        friendly_name_template: "{{ states.switch.back_deck}} Today's Consumption"
+        value_template: '{{ states.switch.back_deck.attributes["today_energy_kwh"] | float }}'
+        unit_of_measurement: 'kWh'  
+  - platform: template
+    sensors:
+      switch_stairwell_amps:
+        friendly_name_template: "{{ states.switch.stairwell}} Current"
+        value_template: '{{ states.switch.stairwell.attributes["current_a"] | float }}'
+        unit_of_measurement: 'A'
+      switch_stairwell_watts:
+        friendly_name_template: "{{ states.switch.stairwell}} Current Consumption"
+        value_template: '{{ states.switch.stairwell.attributes["current_power_w"] | float }}'
+        unit_of_measurement: 'W'
+      switch_stairwell_total_kwh:
+        friendly_name_template: "{{ states.switch.stairwell}} Total Consumption"
+        value_template: '{{ states.switch.stairwell.attributes["total_energy_kwh"] | float }}'
+        unit_of_measurement: 'kWh'
+      switch_stairwell_volts:
+        friendly_name_template: "{{ states.switch.stairwell}} Voltage"
+        value_template: '{{ states.switch.stairwell.attributes["voltage"] | float }}'
+        unit_of_measurement: 'V'
+      switch_stairwell_today_kwh:
+        friendly_name_template: "{{ states.switch.stairwell}} Today's Consumption"
+        value_template: '{{ states.switch.stairwell.attributes["today_energy_kwh"] | float }}'
+        unit_of_measurement: 'kWh'  
+  - platform: template
+    sensors:
+      switch_garage_lights_amps:
+        friendly_name_template: "{{ states.switch.garage_lights}} Current"
+        value_template: '{{ states.switch.garage_lights.attributes["current_a"] | float }}'
+        unit_of_measurement: 'A'
+      switch_garage_lights_watts:
+        friendly_name_template: "{{ states.switch.garage_lights}} Current Consumption"
+        value_template: '{{ states.switch.garage_lights.attributes["current_power_w"] | float }}'
+        unit_of_measurement: 'W'
+      switch_garage_lightsh_total_kwh:
+        friendly_name_template: "{{ states.switch.garage_lightsl}} Total Consumption"
+        value_template: '{{ states.switch.garage_lights.attributes["total_energy_kwh"] | float }}'
+        unit_of_measurement: 'kWh'
+      switch_garage_lights_volts:
+        friendly_name_template: "{{ states.switch.garage_lights}} Voltage"
+        value_template: '{{ states.switch.garage_lights.attributes["voltage"] | float }}'
+        unit_of_measurement: 'V'
+      switch_garage_lights_today_kwh:
+        friendly_name_template: "{{ states.switch.garage_lights}} Today's Consumption"
+        value_template: '{{ states.switch.garage_lights.attributes["today_energy_kwh"] | float }}'
+        unit_of_measurement: 'kWh'  
+  - platform: template
+    sensors:
+      switch_basement_room_amps:
+        friendly_name_template: "{{ states.switch.basement_room}} Current"
+        value_template: '{{ states.switch.basement_room.attributes["current_a"] | float }}'
+        unit_of_measurement: 'A'
+      switch_basement_watts:
+        friendly_name_template: "{{ states.switch.basement_room}} Current Consumption"
+        value_template: '{{ states.switch.basement_room.attributes["current_power_w"] | float }}'
+        unit_of_measurement: 'W'
+      switch_basement_total_kwh:
+        friendly_name_template: "{{ states.switch.basement_room}} Total Consumption"
+        value_template: '{{ states.switch.basement_room.attributes["total_energy_kwh"] | float }}'
+        unit_of_measurement: 'kWh'
+      switch_basement_volts:
+        friendly_name_template: "{{ states.switch.basement_room}} Voltage"
+        value_template: '{{ states.switch.basement_room.attributes["voltage"] | float }}'
+        unit_of_measurement: 'V'
+      switch_basement_today_kwh:
+        friendly_name_template: "{{ states.switch.basement_room}} Today's Consumption"
+        value_template: '{{ states.switch.basement_room.attributes["today_energy_kwh"] | float }}'
+        unit_of_measurement: 'kWh'  
+  - platform: template
+    sensors:
+      switch_front_door_light_amps:
+        friendly_name_template: "{{ states.switch.front_door_light}} Current"
+        value_template: '{{ states.switch.front_door_light.attributes["current_a"] | float }}'
+        unit_of_measurement: 'A'
+      switch_front_door_light_watts:
+        friendly_name_template: "{{ states.switch.front_door_light}} Current Consumption"
+        value_template: '{{ states.switch.front_door_light.attributes["current_power_w"] | float }}'
+        unit_of_measurement: 'W'
+      switch_front_door_light_total_kwh:
+        friendly_name_template: "{{ states.switch.front_door_light}} Total Consumption"
+        value_template: '{{ states.switch.front_door_light.attributes["total_energy_kwh"] | float }}'
+        unit_of_measurement: 'kWh'
+      switch_front_door_light_volts:
+        friendly_name_template: "{{ states.switch.front_door_light}} Voltage"
+        value_template: '{{ states.switch.front_door_light.attributes["voltage"] | float }}'
+        unit_of_measurement: 'V'
+      switch_front_door_light_today_kwh:
+        friendly_name_template: "{{ states.switch.front_door_light}} Today's Consumption"
+        value_template: '{{ states.switch.front_door_light.attributes["today_energy_kwh"] | float }}'
+        unit_of_measurement: 'kWh'  
+  - platform: template
+    sensors:
+      light_living_room_fan_lights_amps:
+        friendly_name_template: "{{ states.light.living_room_fan_lights}} Current"
+        value_template: '{{ states.light.living_room_fan_lights.attributes["current_a"] | float }}'
+        unit_of_measurement: 'A'
+      light_living_room_fan_lights_watts:
+        friendly_name_template: "{{ states.light.living_room_fan_lights}} Current Consumption"
+        value_template: '{{ states.light.living_room_fan_lights.attributes["current_power_w"] | float }}'
+        unit_of_measurement: 'W'
+      light_living_room_fan_lights_total_kwh:
+        friendly_name_template: "{{ states.light.living_room_fan_lights}} Total Consumption"
+        value_template: '{{ states.light.living_room_fan_lights.attributes["total_energy_kwh"] | float }}'
+        unit_of_measurement: 'kWh'
+      light_living_room_fan_lights_volts:
+        friendly_name_template: "{{ states.light.living_room_fan_lights}} Voltage"
+        value_template: '{{ states.light.living_room_fan_lights.attributes["voltage"] | float }}'
+        unit_of_measurement: 'V'
+      light_living_room_fan_lights_today_kwh:
+        friendly_name_template: "{{ states.light.living_room_fan_lights}} Today's Consumption"
+        value_template: '{{ states.light.living_room_fan_lights.attributes["today_energy_kwh"] | float }}'
+        unit_of_measurement: 'kWh'  
+  - platform: template
+    sensors:
+      light_hallway_light_amps:
+        friendly_name_template: "{{ states.light.hallway_light}} Current"
+        value_template: '{{ states.light.hallway_light.attributes["current_a"] | float }}'
+        unit_of_measurement: 'A'
+      light_hallway_light_watts:
+        friendly_name_template: "{{ states.light.hallway_light}} Current Consumption"
+        value_template: '{{ states.light.hallway_light.attributes["current_power_w"] | float }}'
+        unit_of_measurement: 'W'
+      light_hallway_light_total_kwh:
+        friendly_name_template: "{{ states.light.hallway_light}} Total Consumption"
+        value_template: '{{ states.light.hallway_light.attributes["total_energy_kwh"] | float }}'
+        unit_of_measurement: 'kWh'
+      light_hallway_light_volts:
+        friendly_name_template: "{{ states.light.hallway_light}} Voltage"
+        value_template: '{{ states.light.hallway_light.attributes["voltage"] | float }}'
+        unit_of_measurement: 'V'
+      light_hallway_light_today_kwh:
+        friendly_name_template: "{{ states.light.hallway_light}} Today's Consumption"
+        value_template: '{{ states.light.hallway_light.attributes["today_energy_kwh"] | float }}'
+        unit_of_measurement: 'kWh'  
+  - platform: template
+    sensors:
+      light_utility_room_amps:
+        friendly_name_template: "{{ states.light.utility_room}} Current"
+        value_template: '{{ states.light.utility_room.attributes["current_a"] | float }}'
+        unit_of_measurement: 'A'
+      light_utility_room_watts:
+        friendly_name_template: "{{ states.light.utility_room}} Current Consumption"
+        value_template: '{{ states.light.utility_room.attributes["current_power_w"] | float }}'
+        unit_of_measurement: 'W'
+      light_utility_room_total_kwh:
+        friendly_name_template: "{{ states.light.utility_room}} Total Consumption"
+        value_template: '{{ states.light.utility_room.attributes["total_energy_kwh"] | float }}'
+        unit_of_measurement: 'kWh'
+      light_utility_room_volts:
+        friendly_name_template: "{{ states.light.utility_room}} Voltage"
+        value_template: '{{ states.light.utility_room.attributes["voltage"] | float }}'
+        unit_of_measurement: 'V'
+      light_utility_room_today_kwh:
+        friendly_name_template: "{{ states.light.utility_room}} Today's Consumption"
+        value_template: '{{ states.light.utility_room.attributes["today_energy_kwh"] | float }}'
+        unit_of_measurement: 'kWh'  
+  - platform: template
+    sensors:
+      light_living_room_lamp_1_amps:
+        friendly_name_template: "{{ states.light.living_room_lamp_1}} Current"
+        value_template: '{{ states.light.living_room_lamp_1.attributes["current_a"] | float }}'
+        unit_of_measurement: 'A'
+      light_living_room_lamp_1h_watts:
+        friendly_name_template: "{{ states.light.living_room_lamp_1}} Current Consumption"
+        value_template: '{{ states.light.living_room_lamp_1.attributes["current_power_w"] | float }}'
+        unit_of_measurement: 'W'
+      light_living_room_lamp_1h_total_kwh:
+        friendly_name_template: "{{ states.light.living_room_lamp_1}} Total Consumption"
+        value_template: '{{ states.light.living_room_lamp_1.attributes["total_energy_kwh"] | float }}'
+        unit_of_measurement: 'kWh'
+      light_living_room_lamp_1_volts:
+        friendly_name_template: "{{ states.light.living_room_lamp_1}} Voltage"
+        value_template: '{{ states.light.living_room_lamp_1.attributes["voltage"] | float }}'
+        unit_of_measurement: 'V'
+      light_living_room_lamp_1_today_kwh:
+        friendly_name_template: "{{ states.light.living_room_lamp_1}} Today's Consumption"
+        value_template: '{{ states.light.living_room_lamp_1.attributes["today_energy_kwh"] | float }}'
+        unit_of_measurement: 'kWh'  
+  - platform: template
+    sensors:
+      light_living_room_lamp_2_amps:
+        friendly_name_template: "{{ states.light.living_room_lamp_2}} Current"
+        value_template: '{{ states.light.living_room_lamp_2.attributes["current_a"] | float }}'
+        unit_of_measurement: 'A'
+      light_living_room_lamp_2_watts:
+        friendly_name_template: "{{ states.light.living_room_lamp_2}} Current Consumption"
+        value_template: '{{ states.light.living_room_lamp_2.attributes["current_power_w"] | float }}'
+        unit_of_measurement: 'W'
+      light_living_room_lamp_2_total_kwh:
+        friendly_name_template: "{{ states.light.living_room_lamp_2}} Total Consumption"
+        value_template: '{{ states.light.living_room_lamp_2.attributes["total_energy_kwh"] | float }}'
+        unit_of_measurement: 'kWh'
+      light_living_room_lamp_2_volts:
+        friendly_name_template: "{{ states.light.living_room_lamp_2}} Voltage"
+        value_template: '{{ states.light.living_room_lamp_2.attributes["voltage"] | float }}'
+        unit_of_measurement: 'V'
+      light_living_room_lamp_2_today_kwh:
+        friendly_name_template: "{{ states.light.living_room_lamp_2}} Today's Consumption"
+        value_template: '{{ states.light.living_room_lamp_2.attributes["today_energy_kwh"] | float }}'
+        unit_of_measurement: 'kWh'  
+  - platform: template
+    sensors:
+      light_living_room_lamp_3_amps:
+        friendly_name_template: "{{ states.light.living_room_lamp_3}} Current"
+        value_template: '{{ states.light.living_room_lamp_3.attributes["current_a"] | float }}'
+        unit_of_measurement: 'A'
+      light_living_room_lamp_3_watts:
+        friendly_name_template: "{{ states.light.living_room_lamp_3}} Current Consumption"
+        value_template: '{{ states.light.living_room_lamp_3.attributes["current_power_w"] | float }}'
+        unit_of_measurement: 'W'
+      light_living_room_lamp_3_kwh:
+        friendly_name_template: "{{ states.light.living_room_lamp_3}} Total Consumption"
+        value_template: '{{ states.light.living_room_lamp_3.attributes["total_energy_kwh"] | float }}'
+        unit_of_measurement: 'kWh'
+      light_living_room_lamp_3_volts:
+        friendly_name_template: "{{ states.light.living_room_lamp_3}} Voltage"
+        value_template: '{{ states.light.living_room_lamp_3.attributes["voltage"] | float }}'
+        unit_of_measurement: 'V'
+      light_living_room_lamp_3_today_kwh:
+        friendly_name_template: "{{ states.light.living_room_lamp_3}} Today's Consumption"
+        value_template: '{{ states.light.living_room_lamp_3.attributes["today_energy_kwh"] | float }}'
+        unit_of_measurement: 'kWh'  
+###################################################################################################################
+#Google Travel Time (Adjust scan Interval to avoid going over free tier of API usage)
+#   - platform: google_travel_time
+#     api_key: !secret google_travel_time_api_key
+#     name: Home to Work
+#     origin: !secret home
+#     destination: !secret a_work
+#     scan_interval: 600
+#   - platform: google_travel_time
+#     api_key: !secret google_travel_time_api_key
+#     name: Home to 2 Job
+#     origin: !secret home
+#     destination: !secret b_work
+#     scan_interval: 600
+####################################################################################################################
+#Waze Travel Times (Doesn't have API charge. Will give minor directions to avoid for travel times)
+# To be used for Waze travel time config #
+#   - input_select:
+#      destination:
+#      name: destination
+#      options:
+#       - Home
+#       - Work
+      
+#   - platform: template
+#     sensors:
+#       dest_address:
+#           value_template: >-
+#             {%- if is_state("input_select.destination", "Home")  -%}
+#               zone.2_job
+#             {%- elif is_state("input_select.destination", "Work")  -%}
+#               zone.home
+#             {%- else -%}
+#               Unknown
+#             {%- endif %}
+            
+            
+  - platform: waze_travel_time
+    name: Home to work
+    origin: !secret 1_device_tracker
+    destination: zone.work_a
+    region: 'US'
+    units: imperial
+    
+#   - input_select:
+#      destination:
+#      name: destination
+#      options:
+#       - Home
+#       - Work
+      
+#   - platform: template
+#     sensors:
+#       dest_address:
+#           value_template: >-
+#             {%- if is_state("input_select.destination", "Home")  -%}
+#               zone.work_a
+#             {%- elif is_state("input_select.destination", "Work")  -%}
+#               zone.home
+#             {%- else -%}
+#               Unknown
+#             {%- endif %}
+
+
+  - platform: waze_travel_time
+    name: Home To Job_2
+    origin: !secret 2_device_tracker
+    destination: zone.1
+    region: 'US'
+    units: imperial
+    
+
+######################################################################################################################    
+# Email Breach stats (Monthly Fee for API usage now.)
+#  - platform: haveibeenpwned
+#    email:
+#      - !secret home_email
+
+# How Long the System Has been running
+  - platform: uptime
+#Airport Status
+  - platform: faastatus
+    id: AIRPORT
+#season
+  - platform: season
+    type: astronomical
+# Allergy Index. Pulls common allergies from around area. May be used to help adjust HVAC filtering for the house
+  - platform: iqvia
+    zip_code: !secret zip_code
+    monitored_conditions:
+      - allergy_average_forecasted
+      - allergy_index_today
+      - allergy_index_tomorrow
+      - allergy_index_yesterday
+      - asthma_average_forecasted
+      - asthma_index_today
+      - asthma_index_tomorrow
+      - asthma_index_yesterday
+      - disease_average_forecasted
+      - disease_index_today
+      - disease_index_yesterday
+#google Wifi (Surface Home internet. Secondary internet for IOT only will be on VLANS or DDWRT)
+  - platform: google_wifi
+    monitored_conditions:
+      - uptime
+      - last_restart
+      - local_ip
+      - status
+      - current_version
+      - new_version
+#Raspberry Pi Power
+  - platform: rpi_power
+    text_state: true
+# Pi Hole statistics (If Pihole configured from VM enter the host. Ingressed Add-on does not use this config)
+#   - platform: pi_hole
+#     host: !secret pi_hole_location
+#      - ads_blocked_today
+#      - ads_percentage_today
+#      - dns_queries_today
+#      - domains_being_blocked
+#      - queries_cached
+#      - queries_forwarded
+#      - unique_clients
+#      - unique_domains
+#      - clients_ever_seen
+# Crypto Prices
+  - platform: coinmarketcap
+    currency_id: 1 # bitcoin
+  - platform: coinmarketcap
+    currency_id: 2 # litecoin
+  - platform: coinmarketcap
+    currency_id: 74 # dogecoin TO THE MOON!!!!
+  - platform: coinmarketcap
+    currency_id: 1027 # etherium
+# West Coast Time
+  - platform: worldclock
+    time_zone: America/Los_Angeles
+#Obihai Phone/ pulls stats from POTS VOIP line
+  - platform: obihai
+    host: !secret POTS_Host 
+# Airplanes over house 
+  - platform: opensky
+    radius: 50 # in meters 
+# Moon Phase. Helps time when the werewolves strike. 
+  - platform: moon
+#Current DNS Address  
+  - platform: dnsip
+# Time
+  - platform: time_date
+    display_options:
+      - 'time'
+      - 'date'
+      - 'date_time'
+      - 'time_date'
+      - 'time_utc'
+      - 'beat'
+# Text to speech
+tts: # Config for speech from Google home Minis and other audio around house. Can possibly change to a different service to change voice. 
+  - platform: google_translate
+    service_name: google_say
+    
+# Lyft Pricing 
+#  - platform: lyft
+#    client_id: 'example'
+#    client_secret: CLIENT_SECRET
+
+#Google Maps Tracking
+# device_tracker:
+#   - platform: google_maps
+#     username: !secret home_email
+#     scan_interval: 60
+# Router device tracking  (device tracking from VM subnet. IOT devices )
+#   - platform: ddwrt
+#     host: !secret ddwrt_host
+#     username: "example"
+#     password: !secret router_password
+#     consider_home: 180
+#     new_device_defaults:
+#       track_new_devices: True
+#       hide_if_away: True
+# bluetooth device tracking 
+#   - platform: bluetooth_tracker #tracks devices by bluetooth from the server. This should be passively picking up devices. 
+#     consider_home: 180
+#   - platform: nmap_tracker #Better Idea than other trackers outside of bluetooth pulls all device connected to network. 
+#     hosts: !secret nmap
+#     home_interval: 20
+# Twilio. Number used for 2 factor authentication for house along with sending alert notifications from the alarm system and automations 
+twilio:
+  account_sid: !secret twilio_account_sid
+  auth_token: !secret twilio_auth_token
+
+#International Space Station Tracking... Shows the ISS location on Map along with how many people are onboard
+binary_sensor:
+  - platform: iss
+    show_on_map: true
+#Proxmox Host Monitoring Stats
+#   - platform: proxmoxve
+#     host: !secret proxmox_IP
+#     username: !secret proxmox_usr
+#     password: !secret proxmox_psw
+#     nodes:
+#       - node: pve
+#         vms:
+#           - VM_ID_100
+#           - VM_ID_101
+notify:
+  - platform: ecobee #  Notifications go to the Thermostat itself
+    name: Cyberia.Enviro
+    api_key: !secret ecobee_notify_api_key
+    user_key: !secret ecobee_notify_user_key
+#  - name: Home
+#    platform: hangouts # wouldn't rely on this. Google Changing up Hangouts may break. Because Google. 
+#    default_conversations:
+#      - id: !secret hangouts_convo_1
+#      - id: !secret hangouts_convo_2
+  - name: Email2TXT #standard email to text setup. May not work if no internet present. best used for non emergencies or minor alerts in the house
+    platform: smtp
+    server: smtp.gmail.com
+    port: 587
+    timeout: 15
+    sender: !secret home_email
+    encryption: starttls
+    username: !secret home_email
+    password: !secret _email2txt
+    recipient: 
+      - !secret paul_number_email
+    sender_name: Home
+  - name: Email2TXT-Emergency #Normal Alert setup as this sends the text via email to text. May fail if no internet use for non major emergencies or to suplement major emergency texts as it creates an email record
+    platform: smtp
+    server: smtp.gmail.com
+    port: 587
+    timeout: 15
+    sender: !secret home_email
+    encryption: starttls
+    username: !secret home_email
+    password: !secret _email2txt_emer
+    recipient: 
+      - !secret p_number_email
+      - !secret j_number_email
+      - !secret s_number_email 
+    sender_name: Home
+  - name: HomeSMS #Twilio default text. Use for sparing events like One time Pins 
+    platform: twilio_sms
+    from_number: !secret twilio_number1
+  - name: home_alerts   #note this is different than the regular Twilio alert option. This service should only be used for Urgent Alerts ( Also for things we need to run if internet it out)
+    platform: group
+    services:
+      - service: twilio_sms
+        data:
+          target:
+            - !secret p_cell
+            - !secret j_cell
+  - name: emergency_home_alerts   #Same as above config but this is set for all emergency contacts. Alarm script gives message instructions needed for them to check on the house
+    platform: group
+    services:
+      - service: twilio_sms
+        data:
+          target:
+            - !secret heather_cell
+            - !secret amanda_cell
+            - !secret jeanette_cell
+            - !secret scott_cell
+            - !secret mom_cell
+            - !secret dad_cell
+#  Signal Messenger Use house Number for this 
+#   - name: signal
+#     platform: signal_messenger
+#     url: "http://127.0.0.1:8080" # the URL where the Signal Messenger REST API is listening
+#     number: YOUR_PHONE_NUMBER # the sender number
+#     recipients: # one or more recipients
+#       - RECIPIENT1
+#Google Calendar
+google:
+  client_id: !secret google_client_id
+  client_secret: !secret google_client_secret
+
+media_player:
+  - platform: roku
+# - platform: plex
+
+# Homeassistant Cloud needed to be able to access remotely without going through TOR hidden services (that should be used as an emergency option anyway)
+cloud:
+
+# Additional iframes to the Frontend. Any of these configured will show on Guest accounts! Ingress add-ons do not.
+panel_iframe:
+# Pihole Is Running from diff Proxmox VM
+# pihole:
+#    title: Pi-hole
+#    icon: mdi:block-helper
+#    url: !secret pi_hole_location
+#  router:
+#     title: Proxmox
+#     icon: mdi:router-wireless
+#     url: !secret proxmox_gui #Proxmox Gui
+  weather:
+    title: Windy
+    icon: mdi:radar
+    url: https://embed.windy.com/embed2.html
+#Magic Mirror. (Use instead of Lovelace frontend in livingroom. ) 
+#  magicmirror:
+#     title: Magic Mirror
+#     icon: mdi:image-filter-frames
+#     url: !secret mm
+#  grafana:
+#    title: Grafana
+#    icon: mdi:chart-timeline
+#    url: !secret grafana
+#   dakboard: #use for main display panel. 
+#     title: Calendar
+#     icon: mdi:calendar
+#     url: https://dakboard.com/app/
+nest:
+  client_id: !secret nest_client_id
+  client_secret: !secret nest_client_secret
+  binary_sensors:
+    monitored_conditions:
+      - online
+      - motion_detected
+      - person_detected
+      - sound_detected
+    
+ecobee:
+  api_key: !secret ecobee_api_key
+influxdb:
+  host: a0d7b954-influxdb
+  port: 8086
+  database: homeassistant
+  username: !secret influxdb_username
+  password: !secret influxdb_password
+  max_retries: 3
+  default_measurement: state
+alarmdecoder: #controls for actual home alarm system. This allows system to arm/disarm/monitor home alarm system programming option will be on a seperate VM
+  device:
+    type: serial
+    baudrate: '000000'
+  panel_display: On
+  zones:
+    '01':
+      name: 'Garage Door'
+      type: 'opening'
+
+    '02':
+      name: 'Front Door'
+      type: 'opening'
+
+    '03':
+      name: 'Kitchen Door'
+      type: 'opening'
+
+    '04':
+      name: 'Service Door'
+      type: 'opening'
+
+    '06':
+      name: 'Motion Sensor'
+      type: 'motion'
+
+# Auto Light trigger based on presence of people in the house. May override motion sensor automation for upstairs.      
+device_sun_light_trigger:
+  light_group: group.presence
+  device_group: group.device_tracking
+
+group: !include groups.yaml
+automation: !include automations.yaml
+automation old: !include_dir_merge_list automations
+script: !include scripts.yaml
+switch: !include switch.yaml
+camera: !include camera.yaml
+light: !include lights.yaml
+#alarm_control_panel: !include resources/bwalarm/bwalarm.yaml ##setup instructions: https://github.com/akasma74/Hass-Custom-Alarm##
+#panel_custom: !include panel_custom.yaml
+alert: !include alert.yaml
+# Configuration.yaml example
+scene: !include scenes.yaml
