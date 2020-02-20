@@ -1,0 +1,110 @@
+'1569179820729':
+  alias: Arm Alarm System
+  sequence:
+  - data:
+      code: ****
+    service: alarm_control_panel.alarm_arm_away
+  - data:
+      entity_id: automation.turn_on_lights_when_there_is_movement_at_night
+    service: automation.turn_off
+  - data:
+      entity_id: automation.turn_off_lights_2_minutes_after_last_movement
+    service: automation.turn_off
+  - data:
+      message: Home alarm Away Mode Armed.
+    service: notify.mobile_app_3
+  - data:
+      message: Home alarm Away Mode Armed.
+    service: notify.mobile_app_2
+  - data:
+      message: Home alarm Away Mode Armed.
+    service: notify.mobile_app_2j
+  - data:
+      message: The house alarm has been switched on in away mode. Goodbye
+    service: tts.google_say
+'1569180165306':
+  alias: 'Disarm Alarm System '
+  sequence:
+  - data:
+      code: ****
+    service: alarm_control_panel.alarm_disarm
+  - data:
+      entity_id: automation.turn_on_lights_when_there_is_movement_at_night
+    service: automation.turn_on
+  - data:
+      entity_id: automation.turn_off_lights_2_minutes_after_last_movement
+    service: automation.turn_on
+  - data:
+      message: The house alarm has been Deactivated
+    service: tts.google_say
+  - data:
+      message: Home Alarm System  Deactivated
+    service: notify.mobile_app_3
+  - data:
+      message: Home Alarm System  Deactivated
+    service: notify.mobile_app_2
+  - data:
+      message: Home Alarm System  Deactivated
+    service: notify.mobile_app_2j
+'1569196741892':
+  alias: Turn Whole house fan on at night during the summer but keep entry lights
+    off
+  sequence:
+  - condition: state
+    entity_id: sensor.season
+    state: Summer
+  - delay: 00:02:00
+  - device_id: c8e5e589aa194a168037a4c7443747dc
+    domain: light
+    entity_id: light.entryway_light_1
+    type: turn_off
+  - device_id: c8e5e589aa194a168037a4c7443747dc
+    domain: light
+    entity_id: light.entryway_light_1
+    type: turn_off
+'1569258310569':
+  alias: Alarm Triggered
+  sequence:
+  - data:
+      entity_id: alert.alarm_triggered
+    service: alert.turn_on
+  - data:
+      message: ALARM TRIGGERED!!! {{ states[states.alarm_control_panel.house.attributes.changed_by.split(".")[0]][
+        states.alarm_control_panel.house.attributes.changed_by.split(".")[1]].name
+        }}
+    service: notify.mobile_app_3
+  - data:
+      message: ALARM TRIGGERED!!! {{ states[states.alarm_control_panel.house.attributes.changed_by.split(".")[0]][
+        states.alarm_control_panel.house.attributes.changed_by.split(".")[1]].name
+        }}
+    service: notify.mobile_app_2
+  - data:
+      message: ALARM TRIGGERED!!! {{ states[states.alarm_control_panel.house.attributes.changed_by.split(".")[0]][
+        states.alarm_control_panel.house.attributes.changed_by.split(".")[1]].name
+        }}
+    service: notify.mobile_app_2j
+  - data:
+      message: 'Home''s Home ALARM TRIGGERED!!! {{ states[states.alarm_control_panel.house.attributes.changed_by.split(".")[0]][
+        states.alarm_control_panel.house.attributes.changed_by.split(".")[1]].name
+        }} If you are getting this message you can check on the house and see the
+        cameras at this link: https://hasscloud.ui.nabu.casa/
+        Your login will be: username: help, password: HALP!. If all clear:
+        code for alarm panel (and alarm company) is **** from the main screen or panel
+        in house. If there is trouble, the panic code is ****(use only from the webpage
+        link). This will alert the emergency mode.'
+    service: notify.emergency_home_alerts
+'1571196975635':
+  alias: Motion Sensor Front of House
+  sequence:
+  - device_id: e843adfe4b1a49b388395d6edf56bcf6
+    domain: switch
+    entity_id: switch.front_door_light
+    type: toggle
+  - device_id: 4be20a9abb8445088bcd0f742cf270a3
+    domain: switch
+    entity_id: switch.outside_garage_light
+    type: toggle
+  - device_id: bbd6605c661b413d95ea1331f0cfd8b2
+    domain: switch
+    entity_id: switch.garage_door_side_light
+    type: toggle
