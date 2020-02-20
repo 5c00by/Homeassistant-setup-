@@ -1,0 +1,641 @@
+- id: '1523340752812'
+  alias: Turn off lights at dawn
+  trigger:
+  - event: sunrise
+    platform: sun
+  condition: []
+  action:
+  - scene: scene.lights_out
+- id: '1523340999482'
+  alias: HASS AUTO SNAPSHOT
+  trigger:
+  - at: 03:00:00
+    platform: time
+  condition: []
+  action:
+  - service: hassio.snapshot_full
+  - data:
+      message: Backup Created
+    service: notify.mobile_app
+- id: 4ffb474efbac455c922f88c84cf53eea
+  alias: Turn on lights when there is movement at night
+  trigger:
+  - entity_id: binary_sensor.motion_sensor
+    platform: state
+    to: 'on'
+  condition:
+  - condition: state
+    entity_id: sun.sun
+    state: below_horizon
+  action:
+  - scene: scene.nightlight
+- id: 26cf5dc8a7744878bc717f61a2a10604
+  alias: Turn off lights 2 minutes after last movement
+  trigger:
+  - entity_id: binary_sensor.motion_sensor
+    for: 0:02:00
+    platform: state
+    to: 'off'
+  condition:
+  - condition: state
+    entity_id: sun.sun
+    state: below_horizon
+  action:
+  - scene: scene.nightlight_off
+- id: df44b41fcc8f424ab606a487109dc3d4
+  alias: wife 
+  trigger:
+  - entity_id: person.
+    from: not_home
+    platform: state
+    to: home
+  action:
+  - data:
+      message: wife is home
+    service: notify.mobile_app_3
+  - data:
+      message: wife is home
+    service: notify.mobile_app_2p
+  - data:
+      message: Welcome Home!
+    service: notify.mobile_app_2j
+- id: e796d6c335264b63864ff8a62edcbcd3
+  alias: Brock is home
+  trigger:
+  - entity_id: device_tracker.galaxynote9
+    from: not_home
+    platform: state
+    to: home
+  action:
+  - data:
+      message: Brock is home
+    service: notify.mobile_app_3
+  - data:
+      message: Brock is home
+    service: notify.mobile_app_2
+- id: 9ddb07a38f254fbca02061872aa9c73f
+  alias: Hailey is home
+  trigger:
+  - entity_id: person.hailey
+    from: not_home
+    platform: state
+    to: home
+  action:
+  - data:
+      message: Heather is home
+    service: notify.mobile_app_3
+  - data:
+      message: Heather is home
+    service: notify.mobile_app_2
+- id: 7828a400d9714212a52e0c0c1413f37c
+  alias: Pete is home
+  trigger:
+  - entity_id: person.pete
+    from: not_home
+    platform: state
+    to: home
+  action:
+  - data:
+      message: Welcome Home
+    service: notify.mobile_app_3
+  - data:
+      message: Welcome Home!
+    service: notify.mobile_app_2
+  - data:
+      message: Paul is Home!
+    service: notify.mobile_app_2j
+- id: alarm_armed_away
+  alias: '[Alarm] Away Mode Armed'
+  trigger:
+  - entity_id: alarm_control_panel.alarm_panel
+    platform: state
+    to: armed_away
+  action:
+  - data:
+      entity_id: script.1569179820729
+    service: script.turn_on
+- id: alarm_armed_home
+  alias: '[Alarm] Home Mode Armed'
+  trigger:
+  - entity_id: alarm_control_panel.alarm_panel
+    platform: state
+    to: armed_home
+  action:
+  - data:
+      message: Home Mode Armed
+    service: notify.mobile_app_3
+  - data:
+      message: The house alarm has been switched on in home mode. Goodnight
+    service: tts.google_say
+- id: alarm_arming_away
+  alias: '[Alarm] Away Mode Arming'
+  trigger:
+  - entity_id: alarm_control_panel.alarm_panel
+    platform: state
+    to: pending
+  action:
+  - data:
+      message: House alarm activating, ensure all doors and windows are closed
+    service: tts.google_say
+- id: alarm_disarmed
+  alias: '[Alarm] Disarmed'
+  trigger:
+  - entity_id: alarm_control_panel.alarm_panel
+    platform: state
+    to: disarmed
+  action:
+  - data:
+      entity_id: script.1569180165306
+    service: script.turn_on
+- id: alarm_triggered
+  alias: '[Alarm] Triggered'
+  trigger:
+  - entity_id: alarm_control_panel.alarm_panel
+    platform: state
+    to: triggered
+  condition:
+  - condition: state
+    entity_id: group.presence
+    state: away
+  action:
+  - data:
+      entity_id: script.1569258310569
+    entity_id: switch.siren_switch
+    service: script.turn_on
+- id: alarm_warning
+  alias: '[Alarm] Warning'
+  trigger:
+  - entity_id: alarm_control_panel.alarm_panel
+    platform: state
+    to: warning
+  action:
+  - data:
+      message: ALARM Warning {{ states[states.alarm_control_panel.house.attributes.changed_by.split(".")[0]][
+        states.alarm_control_panel.house.attributes.changed_by.split(".")[1]].name
+        }}
+      target: 'person1'
+    service: notify.home
+  - data:
+      message: Hello, the house alarm has been tripped. Please deactivate
+    service: tts.google_say
+  - data:
+      message: ALARM Warning {{ states[states.alarm_control_panel.house.attributes.changed_by.split(".")[0]][
+        states.alarm_control_panel.house.attributes.changed_by.split(".")[1]].name
+        }}
+    service: notify.email2txt
+- id: '1537553412217'
+  alias: Turn on Outside Light at Sunset
+  trigger:
+  - event: sunset
+    platform: sun
+  condition: []
+  action:
+  - device_id: e843adfe4b1a49b388395d6edf56bcf6
+    domain: switch
+    entity_id: switch.front_door_light
+    type: turn_on
+  - device_id: 4be20a9abb8445088bcd0f742cf270a3
+    domain: switch
+    entity_id: switch.outside_garage_light
+    type: turn_on
+  - device_id: c3abc15ca77841bc8c80f933f9c50d17
+    domain: light
+    entity_id: light.oudoor
+    type: turn_on
+- id: '1537647389228'
+  alias: Front Door Open Longer than 5 mins
+  trigger:
+  - entity_id: binary_sensor.front_door
+    for: 00:05:00
+    platform: state
+    to: 'on'
+  condition: []
+  action:
+  - data:
+      message: Front Door Open too long.  Please close!
+    service: tts.google_say
+  - data:
+      entity_id: alert.front_door
+    service: alert.turn_on
+- id: '1538632413337'
+  alias: Change Theme To Day Theme During Day
+  trigger:
+  - entity_id: sun.sun
+    platform: state
+    to: above_horizon
+  condition: []
+  action:
+  - data:
+      name: Google Light Theme
+    service: frontend.set_theme
+- id: '1538632544870'
+  alias: Change Theme To Dark at Night
+  trigger:
+  - entity_id: sun.sun
+    platform: state
+    to: below_horizon
+  condition: []
+  action:
+  - data:
+      name: Google Dark Theme
+    service: frontend.set_theme
+- id: '1541010172971'
+  alias: Back Door Open longer than 5 mins
+  trigger:
+  - entity_id: binary_sensor.kitchen_door
+    for: 00:05:00
+    platform: state
+    to: 'on'
+  condition: []
+  action:
+  - data:
+      message: Back door open too long. Please Close!
+    service: tts.google_say
+  - data:
+      entity_id: alert.back_door
+    service: alert.turn_on
+- id: '1541011143618'
+  alias: Garage Door Open Longer than 5 mins
+  trigger:
+  - entity_id: binary_sensor.garage_door
+    for: 00:05:00
+    platform: state
+    to: 'on'
+  condition: []
+  action:
+  - data:
+      message: Garage door open too long. Please Close!
+    service: tts.google_say
+  - data:
+      entity_id: alert.garage_door
+    service: alert.turn_on
+- id: '1541874699951'
+  alias: Hailey Left House
+  trigger:
+  - entity_id: person.hailey
+    from: home
+    platform: state
+    to: not_home
+  condition: []
+  action:
+  - data:
+      message: Hailey left
+    service: notify.mobile_app_3
+  - data:
+      message: Hailey left
+    service: notify.mobile_app_2
+- id: '1541874847234'
+  alias: Brock Left house
+  trigger:
+  - entity_id: device_tracker.galaxynote9
+    from: home
+    platform: state
+    to: not_home
+  condition: []
+  action:
+  - data:
+      message: Brock left
+    service: notify.mobile_app_3
+  - data:
+      message: Brock left
+    service: notify.mobile_app_2
+- id: '1541875255643'
+  alias: Wife Left house
+  trigger:
+  - entity_id: person.wife
+    from: home
+    platform: state
+    to: not_home
+  condition: []
+  action:
+  - data:
+      message: wife left
+    service: notify.mobile_app_3
+  - data:
+      message: wife left
+    service: notify.mobile_app_2
+  - data:
+      message: See Ya Later Ma'Am!
+    service: notify.mobile_app_2j
+- id: '1541875441561'
+  alias: Pete left House
+  trigger:
+  - entity_id: person.pete
+    from: home
+    platform: state
+    to: not_home
+  condition: []
+  action:
+  - data:
+      message: See ya Later Buddy!
+    service: notify.mobile_app_3
+  - data:
+      message: See ya Later Buddy!
+    service: notify.mobile_app_2
+  - data:
+      message: Paul Left the house
+    service: notify.mobile_app_2j
+- id: '1559183494180'
+  alias: Front Door sensor
+  trigger:
+  - entity_id: binary_sensor.front_door
+    platform: state
+    to: open
+  condition: []
+  action:
+  - data:
+      message: front door triggered
+    service: notify.mobile_app_3
+- id: '1559183680016'
+  alias: Back Door Sensor
+  trigger:
+  - entity_id: binary_sensor.kitchen_door
+    platform: state
+    to: open
+  condition: []
+  action:
+  - data:
+      message: Kitchen Door Triggered
+    service: notify.mobile_app_3
+- id: '1559183808300'
+  alias: Garage Door Sensor
+  trigger:
+  - entity_id: binary_sensor.garage_door
+    platform: state
+    to: open
+  condition: []
+  action:
+  - data:
+      message: Garage door Triggered
+    service: notify.mobile_app_3
+- id: '1559183869278'
+  alias: Utility Door Sensor
+  trigger:
+  - entity_id: binary_sensor.service_door
+    from: closed
+    platform: state
+    to: open
+  condition: []
+  action:
+  - data:
+      message: Furnace Room Door Triggered
+    service: notify.mobile_app_3
+- id: '1566845750347'
+  alias: Whole House Fan on at night during the Summer
+  trigger:
+  - event: sunset
+    offset: +02:00:00
+    platform: sun
+  condition:
+  - condition: state
+    entity_id: sensor.season
+    state: summer
+  - above: '77'
+    condition: numeric_state
+    entity_id: sensor.home_temperature
+  action:
+  - alias: ''
+    data:
+      entity_id: script.1569196741892
+    service: script.turn_on
+  - device_id: 8a589c18ed5343a482aff6c0bc06916a
+    domain: switch
+    entity_id: switch.foyer_light_whole_house_fan
+    type: turn_on
+- id: '1568565686717'
+  alias: Turn On Outside Lights when Person Detected at Night
+  trigger:
+  - event: sunset
+    platform: sun
+  condition:
+  - condition: state
+    entity_id: sun.sun
+    state: below_horizon
+  - condition: and
+    conditions:
+    - condition: device
+      device_id: c1001256675843b99e08d46e7c55ecf1
+      domain: binary_sensor
+      entity_id: binary_sensor.front_door_camera_motion_detected
+      type: is_motion
+    - condition: device
+      device_id: c1001256675843b99e08d46e7c55ecf1
+      domain: binary_sensor
+      entity_id: binary_sensor.front_door_camera_person_detected
+      type: is_occupied
+  action:
+  - alias: ''
+    data:
+      entity_id: script.1571196975635
+    service: script.turn_on
+- id: '1568565895452'
+  alias: 'Turn off Front Lights when Person Not  Detected '
+  trigger:
+  - device_id: c1001256675843b99e08d46e7c55ecf1
+    domain: binary_sensor
+    entity_id: binary_sensor.front_door_camera_motion_detected
+    platform: device
+    type: no_motion
+  - device_id: c1001256675843b99e08d46e7c55ecf1
+    domain: binary_sensor
+    entity_id: binary_sensor.front_door_camera_person_detected
+    platform: device
+    type: not_occupied
+  condition:
+  - condition: state
+    entity_id: sun.sun
+    state: below_horizon
+  action:
+  - alias: ''
+    data:
+      entity_id: script.1571196975635
+    service: script.turn_on
+- id: '1568566416429'
+  alias: Turn on Backyard Light When Motion/Person Detected
+  trigger:
+  - device_id: 843feaef8ffd48b990a96e37446655dc
+    domain: binary_sensor
+    entity_id: binary_sensor.backyard_camera_motion_detected
+    for:
+      hours: 0
+      minutes: 1
+      seconds: 0
+    platform: device
+    type: motion
+  - device_id: 843feaef8ffd48b990a96e37446655dc
+    domain: binary_sensor
+    entity_id: binary_sensor.backyard_camera_person_detected
+    platform: device
+    type: occupied
+  condition:
+  - condition: state
+    entity_id: sun.sun
+    state: 'below_horizon '
+  action:
+  - device_id: a288d03f62ae42169525f37f0acd73be
+    domain: switch
+    entity_id: switch.back_deck
+    type: turn_on
+- id: '1568566521069'
+  alias: Turn Off Backyard Light when Motion Not detected after 2 Minutes
+  trigger:
+  - entity_id: binary_sensor.backyard_camera_motion_detected
+    for: 00:02:00
+    platform: state
+    to: 'off'
+  condition:
+  - condition: state
+    entity_id: sun.sun
+    state: below_horizon
+  action:
+  - device_id: a288d03f62ae42169525f37f0acd73be
+    domain: switch
+    entity_id: switch.back_deck
+    type: turn_off
+- id: '1568870796477'
+  alias: Turn on Garage Lights when I leave Work 
+  trigger:
+  - event: leave
+    platform: geo_location
+    source: ''
+    zone: zone.work_a
+  - entity_id: sun.sun
+    platform: state
+    to: below_horizon
+  condition:
+  - condition: state
+    entity_id: person.pete
+    state: away
+  action:
+  - device_id: 392a8be3c15b49719c94745489021af3
+    domain: ''
+    entity_id: ''
+- id: '1569189931021'
+  alias: Arm Alarm System when Nobody is home
+  description: 'Send notification to Arm the house when nobody is home. '
+  trigger:
+  - entity_id: group.presence
+    for: 00:10:00
+    platform: state
+    to: away
+  - device_id: 3b4a7c15ad1645f2b72bbf34ea08b305
+    domain: binary_sensor
+    entity_id: binary_sensor.home_occupancy
+    for:
+      hours: 0
+      minutes: 10
+      seconds: 0
+    platform: device
+    type: not_occupied
+  condition: []
+  action:
+  - data:
+      message: Nobody Home. Activate Alarm system? actions
+    service: notify.mobile_app_3
+  - data:
+      message: Nobody Home. Activate Alarm system?
+    service: notify.mobile_app_2j
+  - data:
+      message: Nobody Home. Activate Alarm system?
+    service: notify.mobile_app_2
+- id: '1569190112893'
+  alias: Disarm Alarm System when everyone is home
+  trigger:
+  - entity_id: group.presence
+    platform: state
+    to: home
+  - device_id: 3b4a7c15ad1645f2b72bbf34ea08b305
+    domain: binary_sensor
+    entity_id: binary_sensor.home_occupancy
+    platform: device
+    type: occupied
+  condition: []
+  action:
+  - data:
+      entity: script.1569180165306
+    service: script.turn_on
+- id: '1571207026936'
+  alias: Turn Off Garage Lights When no Motion detected after 2 mins
+  description: ''
+  trigger:
+  - entity_id: sensor.motion_sensor_burglar
+    for: 00:02:00
+    platform: state
+    to: '0'
+  condition:
+  - condition: state
+    entity_id: sun.sun
+    state: below_horizon
+  action:
+  - device_id: 392a8be3c15b49719c94745489021af3
+    domain: switch
+    entity_id: switch.garage_lights
+    type: turn_off
+- id: '1574358889393'
+  alias: Living Room Lamps On at Night
+  description: ''
+  trigger:
+  - event: sunset
+    platform: sun
+  condition: []
+  action:
+  - device_id: 17927a957c2d4268bae78c0500bb19f0
+    domain: light
+    entity_id: light.living_room_lamp_1
+    type: turn_on
+  - device_id: 7f1792908e724480b0e5b56717a00e7e
+    domain: light
+    entity_id: light.living_room_lamp_2
+    type: turn_on
+  - device_id: 6e3673c9b5224a1a8886b0dc05d7eb05
+    domain: light
+    entity_id: light.living_room_lamp_3
+    type: turn_on
+- id: '1576022245113'
+  alias: Bright Lamps At Sunset til 10pm when motion detected
+  description: ''
+  trigger:
+  - entity_id: binary_sensor.motion_sensor
+    platform: state
+    to: 'on'
+  condition:
+  - condition: state
+    entity_id: sun.sun
+    state: below_horizon
+  action:
+  - scene: scene.living_room_lamps_on
+- id: rpi_power_issue
+  alias: Power Problem Notification
+  trigger:
+  - platform: numeric_state
+    entity_id: sensor.rpi_power_status
+    value_template: '{{ state.attributes.value }}'
+    above: 0
+    for:
+      minutes: 5
+  condition:
+  action:
+  - service: persistent_notification.create
+    data_template:
+      message: 'RPI Power reported {{ states.sensor.rpi_power_status.state }}. The
+        state had changed from {{ trigger.from_state.state }} '
+      title: Power Supply Issue
+  - service: notify.notify
+    data_template:
+      message: RPI Power reported {{ states.sensor.rpi_power_status.state }}. The
+        state had  changed from {{ trigger.from_state.state }}
+      title: Power Supply Issue
+- id: '1582150650896'
+  alias: Arm house when Notification sent
+  description: Arm Alarm System when notification action is tapped
+  trigger:
+  - event_data:
+      action: arm_alarm
+    event_type: mobile_app_notification_action
+    platform: event
+  condition: []
+  action:
+  - data:
+      code: '9999'
+    entity_id: alarm_control_panel.alarm_panel
+    service: alarm_control_panel.alarm_arm_away
