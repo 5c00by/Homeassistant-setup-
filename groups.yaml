@@ -1,0 +1,105 @@
+# Example configuration.yaml entry
+  master_bedroom:
+    name: Master bedroom
+    entities:
+      - switch.master_bedroom_fan_outlet
+      - switch.master_bedroom_light
+      - sensor.master_bedroom_temperature
+      - media_player.master
+      - media_player.nexus_player
+      - binary_sensor.master_bedroom_occupancy
+  guest_room:
+    name: Guest Bedroom
+    entities:
+      - switch.guest_room_blue
+      - sensor.guest_room_blue_temperature
+      - binary_sensor.guest_room_blue_occupancy
+  office:
+    name: Office
+    entities:
+      - switch.guest_bedroom_brown
+      - sensor.guest_bedroom_brown_temperature
+      - binary_sensor.guest_bedroom_brown_occupancy
+  living_room:
+    name: Livivng Room
+    entities:
+      - switch.living_room_fan
+      - sensor.living_room_temperature
+      - media_player.living_room_speaker
+      - camera.wyzecam_livingroom
+      - binary_sensor.living_room_occupancy
+      - light.living_room_lamp_1
+      - light.living_room_lamp_2
+      - light.living_room_lamp_3
+      - light.living_room_lamp_4
+  kitchen:
+    name: Kitchen
+    entities:
+      - binary_sensor.kitchen_door
+      - camera.wyzecam_kitchen
+      - light.kitchen
+      - switch.kitchen_light_1
+      - switch.kitchen_light_2
+  foyer:
+    name: Foyer
+    entities:
+      - light.entryway_light_1
+      - light.entryway_light_2
+      - media_player.upstairs
+      - switch.foyer_light_whole_house_fan
+      - binary_sensor.motion_sensor
+      - camera.wyzecam_entryway
+      - binary_sensor.front_door
+  hallway:
+    name: Hallway
+    entities:
+      - light.hallway_light
+      - switch.stairwell
+  garage:
+    name: Garage
+    entities:
+      - switch.garage_lights
+      - switch.garage_door_side_light
+      - switch.outside_garage_light
+      - binary_sensor.garage_door
+  basement_Room:
+    name: Basement Room
+    entities:
+      - camera.wyzecam_basement
+  theater_room:
+    name: Theater
+    entities:
+      - switch.theater_room_switch
+      - binary_sensor.basement_occupancy
+      - binary_sensor.service_door
+  outside:
+    name: Outside
+    entities:
+      - switch.front_door_light
+      - switch.back_deck
+      - switch.garage_door_side_light
+      - switch.outside_garage_light
+      - camera.front_door
+      - camera.backyard
+      
+  presence:
+    name: presence
+    entities: 
+      - light.living_room_lamp_1
+      - light.living_room_lamp_2
+      - light.living_room_lamp_3
+      - light.living_room_lamp_4
+  device_tracking:
+    name: Device Tracking
+    entities:
+      - device_tracker.galaxy_a20_lan 
+      - device_tracker.galaxy_note9 
+      - device_tracker.pixel_3 
+      - device_tracker.pixel_2 
+  lights_outdoors:
+    name: Outdoor Lights
+    entities:
+      - switch.front_door_light
+      - switch.back_deck
+      - switch.garage_door_side_light
+      - switch.outside_garage_light    
