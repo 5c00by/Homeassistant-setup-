@@ -1,0 +1,56 @@
+  garage_door:
+    name: Garage is open
+    done_message: Garage is closed
+    entity_id: binary_sensor.garage_door
+    state: 'on'
+    repeat: 2
+    can_acknowledge: true
+    skip_first: true
+    notifiers:
+      - notify.email2txt
+
+  front_door:
+    name: Front Door  is open
+    done_message: Front is closed
+    entity_id: binary_sensor.front_door
+    state: 'on'
+    repeat: 2
+    can_acknowledge: true
+    skip_first: true
+    notifiers:
+      - notify.email2txt
+
+  back_door:
+    name: Back Door  is open
+    done_message: Back is closed
+    entity_id: binary_sensor.kitchen_door
+    state: 'on'
+    repeat: 2
+    can_acknowledge: true
+    skip_first: true
+    notifiers:
+      - notify.email2txt
+
+  utility_door:
+    name: Utility Door  is open
+    done_message: Utility is closed
+    entity_id: binary_sensor.service_door
+    state: 'on'
+    repeat: 2
+    can_acknowledge: true
+    skip_first: true
+    notifiers:
+      - notify.email2txt
+
+  alarm_triggered:
+    name: Alarm Tripped!!
+    message: "ALARM TRIGGERED!!! {{ states[states.alarm_control_panel.house.attributes.changed_by.split(\".\")[0]][ states.alarm_control_panel.house.attributes.changed_by.split(\".\")[1]].name }}"
+    done_message: Alarm is disabled
+    entity_id: alarm_control_panel.alarm_panel
+    state: 'Triggered'
+    repeat: 5
+    can_acknowledge: true
+    skip_first: true
+    notifiers:
+      - notify.home_alerts
+      - notify.emergency_home_alerts
