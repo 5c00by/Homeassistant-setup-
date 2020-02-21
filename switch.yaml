@@ -6,11 +6,11 @@
       turn_on:
         service: alarmdecoder.alarm_toggle_chime
         data:
-          code: 1006 #currently seems to just activate the alarm system my need to see if changing out 'code' for 'keypress' would work instead 
+          code: **** #currently seems to just activate the alarm system my need to see if changing out 'code' for 'keypress' would work instead 
       turn_off:
         service: alarmdecoder.alarm_toggle_chime
         data:
-          code: 1006
+          code: ****
       icon_template: >-
           {% if is_state_attr('alarm_control_panel.alarm_panel', 'chime', true) %}
             mdi:bell-ring
