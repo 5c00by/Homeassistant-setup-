@@ -798,7 +798,7 @@ notify:
     username: !secret home_email
     password: !secret _email2txt
     recipient: 
-      - !secret paul_number_email
+      - !secret p_number_email
     sender_name: Home
   - name: Email2TXT-Emergency #Normal Alert setup as this sends the text via email to text. May fail if no internet use for non major emergencies or to suplement major emergency texts as it creates an email record
     platform: smtp
