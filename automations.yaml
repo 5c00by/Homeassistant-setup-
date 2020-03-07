@@ -333,7 +333,7 @@
       message: See ya Later Buddy!
     service: notify.mobile_app_2
   - data:
-      message: Paul Left the house
+      message: Pete Left the house
     service: notify.mobile_app_2j
 - id: '1559183494180'
   alias: Front Door sensor
@@ -639,3 +639,66 @@
       code: '9999'
     entity_id: alarm_control_panel.alarm_panel
     service: alarm_control_panel.alarm_arm_away
+- id: '1582150650896'
+  alias: Arm House When Notification Sent
+  description: Arm Alarm System when notification action is tapped
+  trigger:
+  - entity_id: group.device_tracking
+    for: 00:00:00
+    platform: state
+    to: away
+  condition: []
+  action:
+  - data:
+      data:
+        actions:
+        - action: arm_alarm_system
+          title: Arm House
+      message: Everyone is out the house. Arm Home?
+      title: Arm Alarm System?
+    service: notify.mobile_app_pixel_1
+  - data:
+      data:
+        actions:
+        - action: arm_alarm_system
+          title: Arm House
+      message: Everyone is out the house. Arm Home?
+      title: Arm Alarm System?
+    service: notify.mobile_app_pixel_2
+- id: '1583528745795'
+  alias: 'Notify me if i''m leaving work '
+  description: 'Trigger notification to turn on garage lights as leaving office '
+  trigger:
+  - entity_id: person.pete
+    event: leave
+    platform: zone
+    zone: zone.work
+  - at: '22:00:00'
+    platform: time
+  condition: []
+  action:
+  - data:
+      data:
+        actions:
+        - action: turn_on_garage_lights
+          title: Heading Home?
+      message: Heading Home? Want the lights on?
+      title: Garage lights?
+    service: notify.mobile_app_pixel_1
+- id: '1583529126256'
+  alias: Turn on Garage Lights when Pete Leaves work
+  description: Turns on Garage lights when notification is triggered
+  trigger:
+  - event_data:
+      action: turn_on_garage_lights
+    event_type: ''
+    platform: event
+  condition: []
+  action:
+  - data:
+      message: Pete's heading home now see ya in a few!
+    service: notify.mobile_app_pixel_2
+  - device_id: 392a8be3c15b49719c94745489021af3
+    domain: switch
+    entity_id: switch.garage_lights
+    type: turn_on
